@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. This change
 ## [Unreleased]
 ### Changed
 - Add a new arity to `make-widget-async` to provide a different widget shape.
+- `logger` namespace added
+- Basic version of `newsapi.org` collector added
 
 ## [0.1.1] - 2017-04-02
 ### Changed

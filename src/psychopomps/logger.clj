@@ -1,13 +1,14 @@
 (ns psychopomps.logger
   "Clojure core.async style logger."
   (:require [clojure.core.async     :as async]
+            [clojure.pprint         :as pprint]
             [io.aviso.ansi          :as ansi]
             [clj-time.core          :as time]
             [clj-time.format        :refer [formatter unparse]]
             [environ.core           :refer [env]]))
 
 
-(def default-level (or (env :log-level) :debug))
+(def default-level (keyword (or (env :log-level) "debug")))
 (def ^:private log-chan (async/chan 1000))
 (def ^:private levels {:trace 1
                        :debug 10

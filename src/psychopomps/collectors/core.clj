@@ -12,4 +12,5 @@
   "Fire up collectores to collect news and put them in the queue"
   []
   (-> news-channel
-      (news-api/collector)))
+      (news-api/collector))
+  news-channel)

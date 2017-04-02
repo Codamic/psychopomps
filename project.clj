@@ -18,7 +18,7 @@
   :main ^:skip-aot psychopomps.core
   :target-path "target/%s"
   :profiles {:dev {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
-                         :log-level    :debug}
+                         :log-level    "debug"}
                    :dependencies []}
 
              :uberjar {:aot :all}})
