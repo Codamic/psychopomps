@@ -9,6 +9,7 @@
                  [environ                "1.1.0"]
                  [clj-oauth              "1.5.5"]
                  [http-kit               "2.2.0"]
+                 [hickory                "0.7.1"]
                  [io.aviso/pretty        "0.1.33"]
                  [clj-time               "0.13.0"]]
 
