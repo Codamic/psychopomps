@@ -89,3 +89,8 @@
                (render-level (:level log-msg))
                (:msg log-msg)))
       (recur))))
+
+(defn stop
+  "Stop the logger activity"
+  []
+  (async/close! log-chan))

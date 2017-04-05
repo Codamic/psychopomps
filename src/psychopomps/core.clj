@@ -10,12 +10,22 @@
   "This is a function for debug purposes"
   [chan]
   (while-let [article (async/<!! chan)]
-    (logger/info "Article: %s" article)))
+    (logger/info "Article: %s ||| %s" (:url article) (:source article)))
+  (async/close! chan))
+
+
+
+(.addShutdownHook
+ (Runtime/getRuntime)
+ (Thread. (fn []
+            (logger/info "Shutting down...")
+            (logger/stop))))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
   (println "Starting Psychopomps...")
   (logger/stdout-logger)
-  (-> (collect-news)
-      (end-of-pipeline)))
+  (let [news-channel (collect-news)]
+    (-> news-channel
+        (end-of-pipeline))))
