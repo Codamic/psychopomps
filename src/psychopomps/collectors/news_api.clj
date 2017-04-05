@@ -1,12 +1,12 @@
 (ns psychopomps.collectors.news-api
   "`newapi.org` collector namespace."
   (:require [clojure.core.async    :refer [go <! >! <!! go-loop chan
-                                           close! sliding-buffer]]
+                                           close! sliding-buffer put!]]
             [org.httpkit.client    :as client]
             [environ.core          :refer [env]]
             [cheshire.core         :refer [parse-string]]
             [psychopomps.logger    :as logger]
-            [psychopomps.utils     :refer [while-let]]))
+            [psychopomps.utils     :refer [while-let fetch>]]))
 
 
 ;;TODO: Add the category support for newsapi sources endpoint
@@ -28,13 +28,13 @@
                 (if error
                   (do (logger/warn "Request failed to '%s' with '%s' status." url status)
                       (logger/warn "Body: %s" body))
-                  (go (>! success-channel (parse-string body true)))))))
+                  (put! success-channel (parse-string body true))))))
 
 (defn- fetch-sources
   "Fetch the current sources of `newsapi.org`."
   []
   (let [sources-chan (chan 10)]
-    (fetch-data SOURCES {:language "en"} sources-chan)
+    (fetch> sources-chan SOURCES (query-options {:language "en"}))
     sources-chan))
 
 (defn- parse-sources
@@ -43,11 +43,11 @@
   [in]
   (logger/debug "Parsing sources...")
   (let [out (chan 200)]
-    (while-let [input (<!! in)]
-      (let [sources (:sources input)]
-        (doseq [source sources]
-          (go (>! out source)))
-        (close! in)))
+    (go (while-let [input  (<! in)]
+          (let [sources (:sources (parse-string input true))]
+            (doseq [source sources]
+              (>! out source))))
+        (close! in))
     out))
 
 (defn- fetch-article-from-source
@@ -56,11 +56,11 @@
   [in]
   (logger/debug "Fetching articles...")
   (let [out (chan (sliding-buffer 1000))]
-    (while-let [source (<!! in)]
-      (fetch-data ARTICLES
-                  {:source (:id source)}
-                  out))
-    (close! in)
+    (go (while-let [source (<! in)]
+          (fetch> out
+                  ARTICLES
+                  (query-options {:source (:id source)})))
+        (close! in))
     out))
 
 (defn- parse-articles
@@ -69,13 +69,12 @@
   [in]
   (logger/debug "Parsing articles...")
   (let [out (chan (sliding-buffer 5000))]
-    (while-let [data (<!! in)]
-      (let [articles (:articles data)
-            source   (:source   data)]
-        (doseq [article articles]
-          (logger/debug "Article title: %s" (:title article))
-          (go (>! out article)))
-        (close! in)))
+    (go (while-let [data (parse-string (<! in) true)]
+          (let [articles (:articles data)
+                source   (:source   data)]
+            (doseq [article articles]
+              (>! out (assoc article :source source)))))
+        (close! in))
     out))
 
 (defn collector
