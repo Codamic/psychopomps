@@ -2,15 +2,15 @@
   "Psychopomps is the godess who guide the souls to underworld."
   (:require [clojure.core.async          :as async]
             [psychopomps.collectors.core :refer [collect-news]]
-            [psychopomps.logger          :as logger])
+            [psychopomps.logger          :as logger]
+            [psychopomps.utils           :refer [while-let]])
   (:gen-class))
 
 (defn end-of-pipeline
   "This is a function for debug purposes"
   [chan]
-  (async/go-loop [article (async/<! chan)]
-    (println (format "Article: %s" article))
-    (recur (async/<! chan))))
+  (while-let [article (async/<!! chan)]
+    (logger/info "Article: %s" article)))
 
 (defn -main
   "I don't do a whole lot ... yet."

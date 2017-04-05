@@ -11,6 +11,4 @@
 (defn collect-news
   "Fire up collectores to collect news and put them in the queue"
   []
-  (-> news-channel
-      (news-api/collector))
-  news-channel)
+  (news-api/collector))

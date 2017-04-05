@@ -8,7 +8,7 @@
                  [cheshire               "5.7.0"]
                  [environ                "1.1.0"]
                  [clj-oauth              "1.5.5"]
-                 [clj-http               "3.4.1"]
+                 [http-kit               "2.2.0"]
                  [io.aviso/pretty        "0.1.33"]
                  [clj-time               "0.13.0"]]
 

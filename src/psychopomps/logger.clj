@@ -39,12 +39,24 @@
   (let [time-format (formatter "yyyy-MM-dd HH:mm:ss:SS")]
     (unparse time-format (time/now))))
 
+(defn- remove-newline
+  [arg]
+  (if (= 0 (count arg))
+    arg
+    (subs arg 0 (- (count arg) 1))))
+
+(defn- ->str
+  [arg]
+  (remove-newline (println-str arg)))
+
 (defn log
   "Log the given string with the given level."
   [level string & rest]
   (if (>= (get-level level)
           (get-level default-level))
-    (async/put! log-chan {:level level :msg (apply format string rest)})))
+    (async/put! log-chan
+                {:level level
+                 :msg (apply format string (map #(->str %) rest))})))
 
 (defn debug
   [string & rest]
