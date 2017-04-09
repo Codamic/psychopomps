@@ -21,5 +21,6 @@
   :profiles {:dev {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
                          :log-level    "debug"}
                    :dependencies []}
+             :test {:dependencies [[se.haleby/stub-http "0.2.1"]]}
 
              :uberjar {:aot :all}})
