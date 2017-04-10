@@ -9,11 +9,9 @@
 (defn end-of-pipeline
   "This is a function for debug purposes"
   [chan]
+  ;(async/go)
   (while-let [article (async/<!! chan)]
-    (logger/info "Article: %s ||| %s" (:url article) (:source article)))
-  (async/close! chan))
-
-
+    (logger/info "Article: %s ||| %s" (:id (:source article)) (count (:articles article)))))
 
 (.addShutdownHook
  (Runtime/getRuntime)

@@ -1,12 +1,13 @@
 (ns psychopomps.collectors.news-api
   "`newapi.org` collector namespace."
   (:require [clojure.core.async    :refer [go <! >! <!! go-loop chan
-                                           close! sliding-buffer put!]]
+                                           close! sliding-buffer put!]
+                                   :as async]
             [org.httpkit.client    :as client]
             [environ.core          :refer [env]]
             [cheshire.core         :refer [parse-string]]
             [psychopomps.logger    :as logger]
-            [psychopomps.utils     :refer [while-let fetch>]]))
+            [psychopomps.utils     :refer [while-let fetch> fetch]]))
 
 
 ;;TODO: Add the category support for newsapi sources endpoint
@@ -19,69 +20,63 @@
    :query-params data
    :headers {"X-Api-Key" (env :news-api-key)}})
 
-(defn- fetch-data
-  "A helper to fetch data from `newapi.org`."
-  [url data success-channel]
-  (logger/debug "Fetching data from '%s' with %s" url data)
-  (client/get url (query-options data)
-              (fn [{:keys [status headers body error]}] ;; asynchronous response handling
-                (if error
-                  (do (logger/warn "Request failed to '%s' with '%s' status." url status)
-                      (logger/warn "Body: %s" body))
-                  (put! success-channel (parse-string body true))))))
-
 (defn- fetch-sources
   "Fetch the current sources of `newsapi.org`."
   []
-  (let [sources-chan (chan 10)]
-    (fetch> sources-chan SOURCES (query-options {:language "en"}))
-    sources-chan))
+  (fetch SOURCES
+         (query-options {:language "en"})
+         false))
 
 (defn- parse-sources
-  "Parse the json  structure inside the `in` channel and put each source in
-  `out` channel."
-  [in]
+  "Parse the json  structure inside the `in` channel and return a vector of
+  channels containing the sources."
+  [data]
   (logger/debug "Parsing sources...")
-  (let [out (chan 200)]
-    (go (while-let [input  (<! in)]
-          (let [sources (:sources (parse-string input true))]
-            (doseq [source sources]
-              (>! out source))))
-        (close! in))
+  (let [parsed-data (parse-string data true)
+        sources     (:sources parsed-data)
+        out         (chan 100)]
+    (async/onto-chan out sources)
     out))
 
-(defn- fetch-article-from-source
-  "Read sources from `in` channel and fetch the articles for them and
-  put them in `out` channel."
-  [in]
-  (logger/debug "Fetching articles...")
-  (let [out (chan (sliding-buffer 1000))]
-    (go (while-let [source (<! in)]
-          (fetch> out
-                  ARTICLES
-                  (query-options {:source (:id source)})))
-        (close! in))
-    out))
+(defn- extract-articles-from-body
+  "Extract the articles from the the API response."
+  [response source]
+  (let [articles (:articles response)]
+    (map #(go (assoc % :source source)) articles)))
 
-(defn- parse-articles
-  "Parse the fetched articles from `in` and create records from each and put them
-  into `out` channel"
+(defn- fetch-articles
+  "Fetch all the articles for the given source"
+  [source]
+  (logger/debug "Fetching from %s" (:id source))
+  (if-not (nil? source)
+    (let [source-id (:id source)
+          body      (fetch ARTICLES (query-options {:source source-id}) false)]
+      (if-not (empty? body)
+        (extract-articles-from-body (parse-string body true)
+                                    source)))
+    {}))
+
+(defn- fetch-all-articles
+  "Fetch all the articles by iterating over given sources and fetch artices
+  for each one."
+  [source-channels out]
+  (async/pipeline-blocking 10 out (map fetch-articles) source-channels false))
+
+(defn fetch-article-details
+  ""
   [in]
-  (logger/debug "Parsing articles...")
-  (let [out (chan (sliding-buffer 5000))]
-    (go (while-let [data (parse-string (<! in) true)]
-          (let [articles (:articles data)
-                source   (:source   data)]
-            (doseq [article articles]
-              (>! out (assoc article :source source)))))
-        (close! in))
+  (logger/debug "Fetching details of articles")
+  (let [out (chan 5000)]
+    (go (when-let [article (<! in)]
+          (logger/warn "<<< 0000000000000000000 %s" (:url article) )
+          (fetch> out (:url article) {:timeout 2000} #(assoc article :raw-content %))
+          (logger/debug "Fetched")))
     out))
 
 (defn collector
   "Collect news from `newsapi.org` and write them into the given queue."
   []
-  (println "Fetching data from 'newsapi.org'...")
-  (-> (fetch-sources)
-      (parse-sources)
-      (fetch-article-from-source)
-      (parse-articles)))
+  (let [articles (chan 5000)
+        sources  (parse-sources (fetch-sources))]
+    (fetch-all-articles sources articles)
+    articles))

@@ -19,7 +19,7 @@
 (def ^:private level-colors {:trace ansi/white
                              :debug ansi/cyan
                              :info  ansi/blue
-                             :warrn ansi/yellow
+                             :warn ansi/yellow
                              :error ansi/red
                              :fatal ansi/bold-red})
 
@@ -81,14 +81,15 @@
 (defn stdout-logger
   "Log the `log-chan` info stdout."
   []
-  (async/go-loop []
-    (let [log-msg (async/<! log-chan)]
-      (println
-       (format "[%s] <%s>: %s"
-               (timestamp)
-               (render-level (:level log-msg))
-               (:msg log-msg)))
-      (recur))))
+  (async/thread
+    (loop []
+      (let [log-msg (async/<!! log-chan)]
+        (println
+         (format "[%s] <%s>: %s"
+                 (timestamp)
+                 (render-level (:level log-msg))
+                 (:msg log-msg)))
+        (recur)))))
 
 (defn stop
   "Stop the logger activity"
