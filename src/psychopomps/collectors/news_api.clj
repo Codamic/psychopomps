@@ -42,12 +42,12 @@
   "Extract the articles from the the API response."
   [response source]
   (let [articles (:articles response)]
-    (map #(go (assoc % :source source)) articles)))
+    (map #(assoc % :source source) articles)))
 
 (defn- fetch-articles
   "Fetch all the articles for the given source"
   [source]
-  (logger/debug "Fetching from %s" (:id source))
+  (logger/info "Fetching from %s" (:id source))
   (if-not (nil? source)
     (let [source-id (:id source)
           body      (fetch ARTICLES (query-options {:source source-id}) false)]
@@ -56,21 +56,30 @@
                                     source)))
     {}))
 
+
 (defn- fetch-all-articles
   "Fetch all the articles by iterating over given sources and fetch artices
   for each one."
   [source-channels out]
-  (async/pipeline-blocking 10 out (map fetch-articles) source-channels false))
+  (async/pipeline-blocking 10 out (comp (map fetch-articles) cat)  source-channels false)
+  out)
 
-(defn fetch-article-details
+
+(defn- fetch-details
+  [article]
+  (logger/warn "<<< 0000000000000000000 %s" (:url article) )
+  (let [body (fetch (:url article) {:timeout 2000} false)]
+    (if-not (empty? body)
+      (logger/debug "Fetched %s" (:url article))
+      (assoc article :raw-content body))))
+
+(defn- fetch-article-details
   ""
   [in]
-  (logger/debug "Fetching details of articles")
   (let [out (chan 5000)]
-    (go (when-let [article (<! in)]
-          (logger/warn "<<< 0000000000000000000 %s" (:url article) )
-          (fetch> out (:url article) {:timeout 2000} #(assoc article :raw-content %))
-          (logger/debug "Fetched")))
+    (logger/debug "Fetching details of articles")
+    ;; TODO: Change the map to filter?
+    (async/pipeline-blocking 10 out (map fetch-details) in false)
     out))
 
 (defn collector
@@ -78,5 +87,5 @@
   []
   (let [articles (chan 5000)
         sources  (parse-sources (fetch-sources))]
-    (fetch-all-articles sources articles)
+    (fetch-article-details (fetch-all-articles sources articles))
     articles))

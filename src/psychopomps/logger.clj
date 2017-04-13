@@ -17,7 +17,7 @@
                        :error 500
                        :fatal 1000})
 (def ^:private level-colors {:trace ansi/white
-                             :debug ansi/cyan
+                             :debug ansi/green
                              :info  ansi/blue
                              :warn ansi/yellow
                              :error ansi/red
