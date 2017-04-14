@@ -5,17 +5,21 @@
             [io.aviso.ansi          :as ansi]
             [clj-time.core          :as time]
             [clj-time.format        :refer [formatter unparse]]
-            [environ.core           :refer [env]]))
+            [environ.core           :refer [env]]
+            [com.stuartsierra.component :as component]))
 
 
 (def default-level (keyword (or (env :log-level) "debug")))
-(def ^:private log-chan (async/chan 1000))
+
+;(def ^:private log-chan (async/chan 1000))
+
 (def ^:private levels {:trace 1
                        :debug 10
                        :info  100
                        :warn  300
                        :error 500
                        :fatal 1000})
+
 (def ^:private level-colors {:trace ansi/white
                              :debug ansi/green
                              :info  ansi/blue
@@ -78,12 +82,12 @@
   [string & rest]
   (apply log :fatal string rest))
 
-(defn stdout-logger
+(defn start-logger
   "Log the `log-chan` info stdout."
-  []
+  [channel]
   (async/thread
     (loop []
-      (let [log-msg (async/<!! log-chan)]
+      (let [log-msg (async/take! channel)]
         (println
          (format "[%s] <%s>: %s"
                  (timestamp)
@@ -91,7 +95,26 @@
                  (:msg log-msg)))
         (recur)))))
 
-(defn stop
+(defn stop-logger
   "Stop the logger activity"
-  []
+  [log-chan]
   (async/close! log-chan))
+
+
+(defrecord Logger []
+  component/Lifecycle
+  (start [this]
+    (let [log-chan (async/chan 1000)]
+      (start-logger log-chan)
+      (assoc this :channel log-chan)))
+
+  (stop [this]
+    (if (:channel this)
+      (stop-logger (:channel this))
+      (this))))
+
+
+(defn new-logger
+  "Create a new logger instance from `Logger` component."
+  []
+  (->Logger))

@@ -10,5 +10,6 @@
   "Assemble the development system"
   []
   (component/system-map
+   :logger    (new-logger)
    :db        (new-db-server)
    :collector (new-collector-pool)))
