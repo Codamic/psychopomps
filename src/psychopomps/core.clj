@@ -11,7 +11,7 @@
   [chan]
   ;(async/go)
   (while-let [article (async/<!! chan)]
-    (logger/info "Article: %s ||| %s" (:id (:source article)) (:url article))))
+    (logger/info "Article: %s ||| %s" (:raw-content article) (:url article))))
 
 (.addShutdownHook
  (Runtime/getRuntime)

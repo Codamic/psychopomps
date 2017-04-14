@@ -70,8 +70,10 @@
   (logger/warn "<<< 0000000000000000000 %s" (:url article) )
   (let [body (fetch (:url article) {:timeout 2000} false)]
     (if-not (empty? body)
-      (logger/debug "Fetched %s" (:url article))
-      (assoc article :raw-content body))))
+      (do
+        (logger/debug "Fetched %s" (:url article))
+        (assoc article :raw-content body))
+      {})))
 
 (defn- fetch-article-details
   ""
@@ -87,5 +89,4 @@
   []
   (let [articles (chan 5000)
         sources  (parse-sources (fetch-sources))]
-    (fetch-article-details (fetch-all-articles sources articles))
-    articles))
+    (fetch-article-details (fetch-all-articles sources articles))))
