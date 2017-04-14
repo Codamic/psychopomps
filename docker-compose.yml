@@ -1,0 +1,5 @@
+version: "2"
+services:
+  db:
+    image: cassandra:latest
+    mem_limit: 1024m

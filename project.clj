@@ -3,15 +3,18 @@
   :url "http://github.com/Codamic/psychopomps"
   :license {:name "GPLv2"
             :url "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"}
-  :dependencies [[org.clojure/clojure    "1.9.0-alpha15"]
-                 [org.clojure/core.async "0.3.442"]
-                 [cheshire               "5.7.0"]
-                 [environ                "1.1.0"]
-                 [clj-oauth              "1.5.5"]
-                 [http-kit               "2.2.0"]
-                 [hickory                "0.7.1"]
-                 [io.aviso/pretty        "0.1.33"]
-                 [clj-time               "0.13.0"]]
+  :dependencies [[org.clojure/clojure        "1.9.0-alpha15"]
+                 [org.clojure/core.async     "0.3.442"]
+                 [cheshire                   "5.7.0"]
+                 [environ                    "1.1.0"]
+                 [clj-oauth                  "1.5.5"]
+                 [http-kit                   "2.2.0"]
+                 [hickory                    "0.7.1"]
+                 [io.aviso/pretty            "0.1.33"]
+                 [clj-time                   "0.13.0"]
+                 [clojurewerkz/cassaforte    "3.0.0-alpha1"]
+                 [com.stuartsierra/component "0.3.2"]
+                 [org.danielsz/system        "0.4.0"]]
 
   :plugins [[lein-environ "1.1.0"]
             [io.aviso/pretty "0.1.33"]]
