@@ -5,9 +5,6 @@
             [psychopomps.collectors.news-api :as news-api]))
 
 
-(def news-channel  (chan 1000))
-
-
 (defn collect-news
   "Fire up collectores to collect news and put them in the queue"
   []
