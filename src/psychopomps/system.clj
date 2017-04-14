@@ -3,6 +3,7 @@
   (:require [com.stuartsierra.component       :as component]
             [psychopomps.db                   :refer [new-db-server]]
             [psychopomps.collectors.component :refer [new-collector-pool]]
+            [psychopomps.logger               :refer [new-logger]]
             (system.components
              [http-kit                        :refer [new-web-server]])))
 

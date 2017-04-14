@@ -6,6 +6,7 @@
             [clj-time.core          :as time]
             [clj-time.format        :refer [formatter unparse]]
             [environ.core           :refer [env]]
+            [system.repl            :refer [system]]
             [com.stuartsierra.component :as component]))
 
 
@@ -58,9 +59,12 @@
   [level string & rest]
   (if (>= (get-level level)
           (get-level default-level))
-    (async/put! log-chan
-                {:level level
-                 :msg (apply format string (map #(->str %) rest))})))
+    (let [chan (:channel (:logger system))]
+      (if (chan)
+        (async/put! (:logger system)
+                    {:level level
+                     :msg (apply format string (map #(->str %) rest))})
+        (println "You have to run the `logger` system.")))))
 
 (defn debug
   [string & rest]
