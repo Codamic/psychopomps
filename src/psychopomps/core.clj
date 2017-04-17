@@ -1,10 +1,8 @@
 (ns psychopomps.core
   "Psychopomps is the godess who guide the souls to underworld."
   (:require [clojure.core.async          :as async]
-            [psychopomps.system          :refer [dev-system]]
             [psychopomps.logger          :as logger]
-            [psychopomps.utils           :refer [while-let]]
-            [system.repl                 :refer [stop system start]])
+            [psychopomps.utils           :refer [while-let]])
   (:gen-class))
 
 (defn end-of-pipeline
@@ -17,8 +15,9 @@
 (.addShutdownHook
  (Runtime/getRuntime)
  (Thread. (fn []
-            (logger/info "Shutting down...")
-            (stop system))))
+            ;;(logger/info "Shutting down...")
+            (println "Shutting down...")
+            (stop))))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -26,4 +25,4 @@
   ;; (let [news-channel (collect-news)]
   ;;   (-> news-channel
   ;;       (end-of-pipeline)))
-  (start system))
+)

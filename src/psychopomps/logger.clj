@@ -5,9 +5,7 @@
             [io.aviso.ansi          :as ansi]
             [clj-time.core          :as time]
             [clj-time.format        :refer [formatter unparse]]
-            [environ.core           :refer [env]]
-            [system.repl            :refer [system]]
-            [com.stuartsierra.component :as component]))
+            [environ.core           :refer [env]]))
 
 
 (def default-level (keyword (or (env :log-level) "debug")))
@@ -56,48 +54,52 @@
 
 (defn log
   "Log the given string with the given level."
-  [level string & rest]
+  [chan level string & rest]
   (if (>= (get-level level)
           (get-level default-level))
-    (let [chan (:channel (:logger system))]
-      (if (chan)
-        (async/put! (:logger system)
-                    {:level level
-                     :msg (apply format string (map #(->str %) rest))})
-        (println "You have to run the `logger` system.")))))
+    (if (chan)
+      (async/put! (:logger system)
+                  {:level level
+                   :msg (apply format string (map #(->str %) rest))})
+      (println "You have to run the `logger` system."))))
 
 (defn debug
   [string & rest]
-  (apply log :debug string rest))
+  (let [log (:log (:logger system))]
+    (apply log :debug string rest)))
 
 (defn info
   [string & rest]
-  (apply log :info string rest))
+  (let [log (:log (:logger system))]
+    (apply log :info string rest)))
 
 (defn warn
   [string & rest]
-  (apply log :warn string rest))
+  (let [log (:log (:logger system))]
+    (apply log :warn string rest)))
 
 (defn error
   [string & rest]
-  (apply log :error string rest))
+  (let [log (:log (:logger system))]
+    (apply log :error string rest)))
 
 (defn fatal
   [string & rest]
-  (apply log :fatal string rest))
+  (let [log (:log (:logger system))]
+    (apply log :fatal string rest)))
 
 (defn start-logger
   "Log the `log-chan` info stdout."
   [channel]
   (async/thread
-    (loop []
-      (let [log-msg (async/take! channel)]
+    (loop [log-msg  (async/<!! channel)]
+      (when log-msg
         (println
          (format "[%s] <%s>: %s"
                  (timestamp)
                  (render-level (:level log-msg))
                  (:msg log-msg)))
-        (recur)))))
+        (recur (async/<!! channel))))))
 
 (defn stop-logger
   "Stop the logger activity"
@@ -105,20 +107,25 @@
   (async/close! log-chan))
 
 
-(defrecord Logger []
-  component/Lifecycle
-  (start [this]
-    (let [log-chan (async/chan 1000)]
-      (start-logger log-chan)
-      (assoc this :channel log-chan)))
+;; (defrecord Logger []
+;;   component/Lifecycle
+;;   (start [this]
+;;     (let [log-chan (async/chan 1000)]
 
-  (stop [this]
-    (if (:channel this)
-      (stop-logger (:channel this))
-      (this))))
+;;       (start-logger log-chan)
+;;       (assoc this
+;;              :channel log-chan
+;;              :log (fn [chan & rest] (apply log log-chan rest)))))
+
+;;   (stop [this]
+;;     (if (:channel this)
+;;       (do
+;;         (stop-logger (:channel this))
+;;         (dissoc this :channel :log))
+;;       this)))
 
 
-(defn new-logger
-  "Create a new logger instance from `Logger` component."
-  []
-  (->Logger))
+;; (defn new-logger
+;;   "Create a new logger instance from `Logger` component."
+;;   []
+;;   (->Logger))
