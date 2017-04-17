@@ -5,7 +5,8 @@
             [io.aviso.ansi          :as ansi]
             [clj-time.core          :as time]
             [clj-time.format        :refer [formatter unparse]]
-            [environ.core           :refer [env]]))
+            [environ.core           :refer [env]]
+            [psychopomps.unit       :as unit]))
 
 
 (def default-level (keyword (or (env :log-level) "debug")))
@@ -107,25 +108,25 @@
   (async/close! log-chan))
 
 
-;; (defrecord Logger []
-;;   component/Lifecycle
-;;   (start [this]
-;;     (let [log-chan (async/chan 1000)]
+(defrecord Logger []
+  unit/Structure
+  (start [this]
+    (let [log-chan (async/chan 1000)]
 
-;;       (start-logger log-chan)
-;;       (assoc this
-;;              :channel log-chan
-;;              :log (fn [chan & rest] (apply log log-chan rest)))))
+      (start-logger log-chan)
+      (assoc this
+             :channel log-chan
+             :log (fn [chan & rest] (apply log log-chan rest)))))
 
-;;   (stop [this]
-;;     (if (:channel this)
-;;       (do
-;;         (stop-logger (:channel this))
-;;         (dissoc this :channel :log))
-;;       this)))
+  (stop [this]
+    (if (:channel this)
+      (do
+        (stop-logger (:channel this))
+        (dissoc this :channel :log))
+      this)))
 
 
-;; (defn new-logger
-;;   "Create a new logger instance from `Logger` component."
-;;   []
-;;   (->Logger))
+(defn new-logger
+  "Create a new logger instance from `Logger` component."
+  []
+  (->Logger))

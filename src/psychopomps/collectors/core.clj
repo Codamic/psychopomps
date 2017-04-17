@@ -5,6 +5,8 @@
             [psychopomps.collectors.news-api :as news-api]))
 
 
+(defn new-collector-pool [] nil)
+
 (defn collect-news
   "Fire up collectores to collect news and put them in the queue"
   []

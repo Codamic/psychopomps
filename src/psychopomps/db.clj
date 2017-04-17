@@ -3,12 +3,12 @@
   database."
   (:require [clojurewerkz.cassaforte.client :as client]
             [environ.core                   :as environ]
-            [com.stuartsierra.component     :as component]
+            [psychopomps.unit               :as unit]
             [psychopomps.logger             :as logger]))
 
 
-(defrecord CassandraServer [host]
-  component/Lifecycle
+(defrecord CassandraClient [host]
+  unit/Structure
   (start [this]
     (logger/info "Connecting to Cassandra cluster...")
     (assoc this :session (client/connect host)))
@@ -21,9 +21,9 @@
         (dissoc this :session))
       this)))
 
-(defn new-db-server
-  "Create a new instance of `CassandraServer` component."
+(defn new-cassandra-client
+  "Create a new instance of `CassandraClient` component."
   []
   (let [host (or (environ/env :cassandra-host)
                  ["127.0.0.1"])]
-    (->CassandraServer host)))
+    (->CassandraClient host)))
