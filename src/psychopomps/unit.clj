@@ -38,12 +38,12 @@
       (if-not (empty? requirements)
         ;; In case of any requirement we need to start them first
         (doseq [req-name requirements]
-          (start-unit req-name (get units req-name) system))
+          (start-unit req-name (get (:units @system) req-name) system))
 
         (let [start-func   (:start record)
               started-unit (start-func record)]
           ;; Replace the record value with the started instance
-          (swap! system update-system name started-unit))))))
+          (swap! system update-started-system name started-unit))))))
 
 (defn- stop-unit
   "Stop the given unit"
@@ -54,9 +54,10 @@
       (let [stop-func     (:stop record)
             stopped-unit  (stop-func record)]
         (swap! system update-stopped-system name stopped-unit))
+
       (if-not (empty? requirements)
         (doseq [req-name requirements]
-          (stop-unit req-name (get units req-name) system))))))
+          (stop-unit req-name (get (:units @system) req-name) system))))))
 
 (defn- iterate-units
   "Iterate over system units"
@@ -74,6 +75,10 @@
 (defn system
   []
   @default-system)
+
+(defn get-unit
+  [unit-name]
+  (get (:units (system)) unit-name))
 
 (defn start-system
   "Start the given system and call start on all the units"

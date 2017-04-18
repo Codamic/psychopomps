@@ -2,7 +2,9 @@
   "Psychopomps is the godess who guide the souls to underworld."
   (:require [clojure.core.async          :as async]
             [psychopomps.logger          :as logger]
-            [psychopomps.utils           :refer [while-let]])
+            [psychopomps.system          :as system]
+            [psychopomps.utils           :refer [while-let]]
+            [psychopomps.unit            :refer [set-system! start stop]])
   (:gen-class))
 
 
@@ -27,4 +29,5 @@
   ;; (let [news-channel (collect-news)]
   ;;   (-> news-channel
   ;;       (end-of-pipeline)))
-)
+  (set-system! system/dev)
+  (start))

@@ -4,14 +4,14 @@
             [psychopomps.db          :refer [new-cassandra-client]]
             [psychopomps.collectors.core :refer [new-collector-pool]]))
 
-(def dev-system
-  (atom {:units {:logger     {:record (new-logger)
-                              :started nil}
+(def dev
+  {:units {:logger     {:record (new-logger)
+                        :started nil}
 
-                 :db         {:record (new-cassandra-client)
-                              :requires [:logger]
-                              :started nil}
+           :db         {:record (new-cassandra-client)
+                        :requires [:logger]
+                        :started nil}
 
-                 :collectors {:record (new-collector-pool)
-                              :requires [:logger :db]
-                              :started nil}}}))
+           :collectors {:record (new-collector-pool)
+                        :requires [:logger :db]
+                        :started nil}}})

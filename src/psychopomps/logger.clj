@@ -59,34 +59,34 @@
   (if (>= (get-level level)
           (get-level default-level))
     (if (chan)
-      (async/put! (:logger system)
+      (async/put! (unit/get-unit :logger)
                   {:level level
                    :msg (apply format string (map #(->str %) rest))})
       (println "You have to run the `logger` system."))))
 
 (defn debug
   [string & rest]
-  (let [log (:log (:logger system))]
+  (let [log (:log (unit/get-unit :logger))]
     (apply log :debug string rest)))
 
 (defn info
   [string & rest]
-  (let [log (:log (:logger system))]
+  (let [log (:log (unit/get-unit :logger))]
     (apply log :info string rest)))
 
 (defn warn
   [string & rest]
-  (let [log (:log (:logger system))]
+  (let [log (:log (unit/get-unit :logger))]
     (apply log :warn string rest)))
 
 (defn error
   [string & rest]
-  (let [log (:log (:logger system))]
+  (let [log (:log (unit/get-unit :logger))]
     (apply log :error string rest)))
 
 (defn fatal
   [string & rest]
-  (let [log (:log (:logger system))]
+  (let [log (:log (unit/get-unit :logger))]
     (apply log :fatal string rest)))
 
 (defn start-logger
