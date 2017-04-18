@@ -19,14 +19,14 @@
 (defn- update-started-system
   "Update the system with the given started unit data"
   [system name unit]
-  (let [sys (update-in system [:units name :record] unit)]
-    (update-in sys [:units name :started? true])))
+  (let [sys (update-in system [:units name :record] (fn [_] unit))]
+    (update-in sys [:units name :started?] (fn [_] true))))
 
 (defn- update-stopped-system
   "Update the system with the given sopped unit data"
   [system name unit]
-  (let [sys (update-in system [:units name :record] unit)]
-    (update-in sys [:units name :started? false])))
+  (let [sys (update-in system [:units name :record] (fn [_] unit))]
+    (update-in sys [:units name :started?] (fn [_] false))))
 
 (defn- start-unit
   "Start the given unit"
@@ -38,12 +38,11 @@
       (if-not (empty? requirements)
         ;; In case of any requirement we need to start them first
         (doseq [req-name requirements]
-          (start-unit req-name (get (:units @system) req-name) system))
+          (start-unit req-name (get (:units @system) req-name) system)))
 
-        (let [start-func   (:start record)
-              started-unit (start-func record)]
-          ;; Replace the record value with the started instance
-          (swap! system update-started-system name started-unit))))))
+      (let [started-unit (.start record)]
+        ;; Replace the record value with the started instance
+        (swap! system update-started-system name started-unit)))))
 
 (defn- stop-unit
   "Stop the given unit"
@@ -51,8 +50,7 @@
   (if (started? data)
     (let [requirements (or (:requires data) [])
           record       (:record   data)]
-      (let [stop-func     (:stop record)
-            stopped-unit  (stop-func record)]
+      (let [stopped-unit (.stop record)]
         (swap! system update-stopped-system name stopped-unit))
 
       (if-not (empty? requirements)
@@ -64,7 +62,11 @@
   [system f]
   (let [units (:units @system)]
     (doseq [[unit-name unit-data] units]
-      (f unit-name unit-data system))))
+      (if (satisfies? Structure (:record unit-data))
+        (do
+          (f unit-name unit-data system))
+        (throw (Exception. (format "'%s' unit does not satisfy the 'Structure' protocol."
+                                   unit-name)))))))
 
 ;; Global Functions ---------------------------
 (defn set-system!
@@ -78,7 +80,7 @@
 
 (defn get-unit
   [unit-name]
-  (get (:units (system)) unit-name))
+  (:record (get (:units (system)) unit-name)))
 
 (defn start-system
   "Start the given system and call start on all the units"

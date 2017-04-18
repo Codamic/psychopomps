@@ -58,36 +58,36 @@
   [chan level string & rest]
   (if (>= (get-level level)
           (get-level default-level))
-    (if (chan)
-      (async/put! (unit/get-unit :logger)
+    (if-not (nil? chan)
+      (async/put! chan
                   {:level level
                    :msg (apply format string (map #(->str %) rest))})
       (println "You have to run the `logger` system."))))
 
 (defn debug
   [string & rest]
-  (let [log (:log (unit/get-unit :logger))]
-    (apply log :debug string rest)))
+  (let [c (:channel (unit/get-unit :logger))]
+    (apply log c :debug string rest)))
 
 (defn info
   [string & rest]
-  (let [log (:log (unit/get-unit :logger))]
-    (apply log :info string rest)))
+  (let [c (:channel (unit/get-unit :logger))]
+    (apply log c :info string rest)))
 
 (defn warn
   [string & rest]
-  (let [log (:log (unit/get-unit :logger))]
-    (apply log :warn string rest)))
+  (let [c (:channel (unit/get-unit :logger))]
+    (apply log c :warn string rest)))
 
 (defn error
   [string & rest]
-  (let [log (:log (unit/get-unit :logger))]
-    (apply log :error string rest)))
+  (let [c (:channel (unit/get-unit :logger))]
+    (apply log c :error string rest)))
 
 (defn fatal
   [string & rest]
-  (let [log (:log (unit/get-unit :logger))]
-    (apply log :fatal string rest)))
+  (let [c (:channel (unit/get-unit :logger))]
+    (apply log c :fatal string rest)))
 
 (defn start-logger
   "Log the `log-chan` info stdout."
@@ -114,15 +114,13 @@
     (let [log-chan (async/chan 1000)]
 
       (start-logger log-chan)
-      (assoc this
-             :channel log-chan
-             :log (fn [chan & rest] (apply log log-chan rest)))))
+      (assoc this :channel log-chan)))
 
   (stop [this]
     (if (:channel this)
       (do
         (stop-logger (:channel this))
-        (dissoc this :channel :log))
+        (dissoc this :channel))
       this)))
 
 
