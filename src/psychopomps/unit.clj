@@ -11,6 +11,12 @@
   (stop  [unit]))
 
 ;; Private Functions -------------------------------
+(defn- gather-inputs
+  "Gather all the inputs for the given unit name from the provided list of
+  input units"
+  [name]
+  (let []))
+
 (defn- started?
   "Returns true if unit already started"
   [unit-data]
@@ -40,7 +46,9 @@
         (doseq [req-name requirements]
           (start-unit req-name (get (:units @system) req-name) system)))
 
-      (let [started-unit (.start record)]
+      (let [inputs       (gather-inputs name)
+            new-record   (assoc record :inputs inputs)
+            started-unit (.start new-record)]
         ;; Replace the record value with the started instance
         (swap! system update-started-system name started-unit)))))
 
