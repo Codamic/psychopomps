@@ -35,6 +35,19 @@
     (update-in sys [:units name :started?] (fn [_] false))))
 
 
+(defn- extract-output-of
+  [unit-name]
+  (let [unit (get-system-entry unit-name)]
+
+    (if-not (started? unit)
+      (throw-exception "Unit '%s' is not started yet." unit-name))
+
+    (let [input (:output (:record unit))]
+      (if (nil? input)
+        (throw-exception "Unit '%s' does not provide an :output."
+                         unit-name))
+      input)))
+
 (defn- gather-inputs
   "Gather all the inputs for the given unit name from the provided list of
   input units"
@@ -42,18 +55,8 @@
   (let [input-names (:inputs (get-system-entry name))]
     (if (and (not (nil? input-names))
              (vector? input-names))
-      (map input-names
-           (fn [input-name]
-             (let [unit (get-system-entry input-name)]
-
-               (if-not (started? unit)
-                 (throw-exception "Unit '%s' is not started yet." input-name))
-
-               (let [input (:output (:record unit))]
-                 (if (nil? input)
-                   (throw-exception "Unit '%s' does not provide an :output."
-                                    input-name))
-                 input)))))))
+      (map  extract-output-of input-names)
+      [])))
 
 (defn- start-dependencies
   [{:keys [name data system] :as all}]
@@ -68,8 +71,8 @@
 
 (defn- inject-inputs
   [{:keys [name data system] :as all}]
-  (let [inputs       (gather-inputs name)]
-    (if-not (nil? inputs)
+  (let [inputs (gather-inputs name)]
+    (if-not (empty? inputs)
       (let [new-record   (assoc (:record data) :inputs inputs)
             new-data     (update-in data [:record] (fn [_] new-record))]
         {:name name :data new-data :system system})

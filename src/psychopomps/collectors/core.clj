@@ -16,7 +16,8 @@
   unit/Structure
   (start [this]
     (logger/info "Starting the collectors pool...")
-    (assoc this :output-chan (collect-news)))
+    (let [channel (collect-news)]
+      (assoc this :output-chan channel :output channel)))
   (stop [this]
     (if (:output-chan this)
       (let [channel (:output-chan this)]
