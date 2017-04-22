@@ -11,11 +11,11 @@
   (stop  [unit]))
 
 ;; Private Functions -------------------------------
-(defn- gather-inputs
-  "Gather all the inputs for the given unit name from the provided list of
-  input units"
-  [name]
-  (let []))
+(declare get-system-entry start-unit)
+
+(defn- throw-exception
+  [& rest]
+  (throw (Exception. (apply format rest))))
 
 (defn- started?
   "Returns true if unit already started"
@@ -34,23 +34,65 @@
   (let [sys (update-in system [:units name :record] (fn [_] unit))]
     (update-in sys [:units name :started?] (fn [_] false))))
 
+
+(defn- gather-inputs
+  "Gather all the inputs for the given unit name from the provided list of
+  input units"
+  [name]
+  (let [input-names (:inputs (get-system-entry name))]
+    (if (and (not (nil? input-names))
+             (vector? input-names))
+      (map input-names
+           (fn [input-name]
+             (let [unit (get-system-entry input-name)]
+
+               (if-not (started? unit)
+                 (throw-exception "Unit '%s' is not started yet." input-name))
+
+               (let [input (:output (:record unit))]
+                 (if (nil? input)
+                   (throw-exception "Unit '%s' does not provide an :output."
+                                    input-name))
+                 input)))))))
+
+(defn- start-dependencies
+  [{:keys [name data system] :as all}]
+  (let [requirements (or (:requires data) [])
+        record       (:record   data)]
+
+    (if-not (empty? requirements)
+      ;; In case of any requirement we need to start them first
+      (doseq [req-name requirements]
+        (start-unit req-name (get-system-entry req-name) system)))
+    all))
+
+(defn- inject-inputs
+  [{:keys [name data system] :as all}]
+  (let [inputs       (gather-inputs name)]
+    (if-not (nil? inputs)
+      (let [new-record   (assoc (:record data) :inputs inputs)
+            new-data     (update-in data [:record] (fn [_] new-record))]
+        {:name name :data new-data :system system})
+      all)))
+
+(defn- run-the-start-method
+  [{:keys [name data system] :as all}]
+  (let [record       (:record data)
+        started-unit (.start record)]
+    ;; Replace the record value with the started instance
+    (swap! system update-started-system name started-unit)
+    (assoc all :system system)))
+
 (defn- start-unit
   "Start the given unit"
   [name data system]
-  (if-not (started? data)
-    (let [requirements (or (:requires data) [])
-          record       (:record   data)]
-
-      (if-not (empty? requirements)
-        ;; In case of any requirement we need to start them first
-        (doseq [req-name requirements]
-          (start-unit req-name (get (:units @system) req-name) system)))
-
-      (let [inputs       (gather-inputs name)
-            new-record   (assoc record :inputs inputs)
-            started-unit (.start new-record)]
-        ;; Replace the record value with the started instance
-        (swap! system update-started-system name started-unit)))))
+  (let [bundle {:name name :data data :system system}]
+    (if-not (started? data)
+      (-> bundle
+          (start-dependencies)
+          (inject-inputs)
+          (run-the-start-method))
+      bundle)))
 
 (defn- stop-unit
   "Stop the given unit"
@@ -86,9 +128,13 @@
   []
   @default-system)
 
+(defn get-system-entry
+  [unit-name]
+  (get (:units (system)) unit-name))
+
 (defn get-unit
   [unit-name]
-  (:record (get (:units (system)) unit-name)))
+  (:record (get-system-entry unit-name)))
 
 (defn start-system
   "Start the given system and call start on all the units"

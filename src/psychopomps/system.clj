@@ -14,9 +14,10 @@
            ;;              :started nil}
 
            :collectors {:record (new-collector-pool)
-                        :requires [:logger :db]
+                        :requires [:logger]
                         :started nil}
 
            :html-to-md {:record (new-html->md-job)
                         :requires [:logger :collectors]
+                        :started nil
                         :inputs [:collectors]}}})
