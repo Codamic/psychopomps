@@ -1,10 +1,10 @@
 (ns psychopomps.core
   "Psychopomps is the godess who guide the souls to underworld."
-  (:require [clojure.core.async          :as async]
-            [psychopomps.logger          :as logger]
-            [psychopomps.system          :as system]
-            [psychopomps.utils           :refer [while-let]]
-            [psychopomps.unit            :refer [set-system! start stop]])
+  (:require [clojure.core.async        :as async]
+            [psychopomps.logger        :as logger]
+            [psychopomps.system        :as system]
+            [psychopomps.utils         :refer [while-let]]
+            [hellhound.components.core :refer [set-system! start stop]])
   (:gen-class))
 
 

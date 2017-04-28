@@ -6,18 +6,20 @@
             [psychopomps.jobs.convertors.html :refer [new-html->md-job]]))
 
 (def dev
-  {:units {:logger     {:record (new-logger)
+  {:components {:logger     {:record (new-logger)
                         :started nil}
 
            ;; :db         {:record (new-cassandra-client)
            ;;              :requires [:logger]
            ;;              :started nil}
 
+
            :collectors {:record (new-collector-pool)
                         :requires [:logger]
                         :started nil}
 
-           :html-to-md {:record (new-html->md-job)
-                        :requires [:logger :collectors]
-                        :started nil
-                        :inputs [:collectors]}}})
+           ;; :html-to-md {:record (new-html->md-job)
+           ;;              :requires [:logger :collectors]
+           ;;              :started nil
+           ;;              :inputs [:collectors]}
+           }})

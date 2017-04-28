@@ -3,12 +3,12 @@
   database."
   (:require [clojurewerkz.cassaforte.client :as client]
             [environ.core                   :as environ]
-            [psychopomps.unit               :as unit]
+            [hellhound.components.core      :as component]
             [psychopomps.logger             :as logger]))
 
 
 (defrecord CassandraClient [host]
-  unit/Structure
+  component/Lifecycle
   (start [this]
     (logger/info "Connecting to Cassandra cluster...")
     (assoc this :session (client/connect host)))

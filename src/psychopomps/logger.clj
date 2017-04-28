@@ -6,7 +6,7 @@
             [clj-time.core          :as time]
             [clj-time.format        :refer [formatter unparse]]
             [environ.core           :refer [env]]
-            [psychopomps.unit       :as unit]))
+            [hellhound.components.core :as component]))
 
 
 (def default-level (keyword (or (env :log-level) "debug")))
@@ -66,27 +66,27 @@
 
 (defn debug
   [string & rest]
-  (let [c (:channel (unit/get-unit :logger))]
+  (let [c (:channel (component/get-component :logger))]
     (apply log c :debug string rest)))
 
 (defn info
   [string & rest]
-  (let [c (:channel (unit/get-unit :logger))]
+  (let [c (:channel (component/get-component :logger))]
     (apply log c :info string rest)))
 
 (defn warn
   [string & rest]
-  (let [c (:channel (unit/get-unit :logger))]
+  (let [c (:channel (component/get-component :logger))]
     (apply log c :warn string rest)))
 
 (defn error
   [string & rest]
-  (let [c (:channel (unit/get-unit :logger))]
+  (let [c (:channel (component/get-component :logger))]
     (apply log c :error string rest)))
 
 (defn fatal
   [string & rest]
-  (let [c (:channel (unit/get-unit :logger))]
+  (let [c (:channel (component/get-component :logger))]
     (apply log c :fatal string rest)))
 
 (defn start-logger
@@ -109,10 +109,9 @@
 
 
 (defrecord Logger []
-  unit/Structure
+  component/Lifecycle
   (start [this]
     (let [log-chan (async/chan 1000)]
-
       (start-logger log-chan)
       (assoc this :channel log-chan)))
 

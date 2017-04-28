@@ -12,6 +12,7 @@
                  [hickory                    "0.7.1"]
                  [io.aviso/pretty            "0.1.33"]
                  [clj-time                   "0.13.0"]
+                 [codamic/hellhound          "0.13.0-SNAPSHOT"]
                  [clojurewerkz/cassaforte    "3.0.0-alpha1"]
                  [com.stuartsierra/component "0.3.2"]
                  [org.danielsz/system        "0.4.0"]]
