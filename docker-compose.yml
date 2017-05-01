@@ -1,5 +1,10 @@
 version: "2"
 services:
-  db:
-    image: cassandra:latest
-    mem_limit: 1024m
+  # db:
+  #   image: cassandra:latest
+  #   mem_limit: 1024m
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
