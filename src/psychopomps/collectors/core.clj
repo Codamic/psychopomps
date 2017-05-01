@@ -3,7 +3,7 @@
   their results."
   (:require [clojure.core.async              :refer [chan close!]]
             [psychopomps.collectors.news-api :as news-api]
-            [psychopomps.logger              :as logger]
+            [hellhound.logger.core              :as logger]
             [hellhound.components.core       :as component]))
 
 (defn collect-news

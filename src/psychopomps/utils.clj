@@ -2,7 +2,7 @@
   "A namespace for utility functions"
   (:require [clojure.core.async  :refer [put!] :as async]
             [org.httpkit.client  :as client]
-            [psychopomps.logger  :as logger]))
+            [hellhound.logger.core  :as logger]))
 
 (defmacro while-let
   "Repeatedly executes body while test expression is true, evaluating

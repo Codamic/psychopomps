@@ -4,7 +4,7 @@
   (:require [clojurewerkz.cassaforte.client :as client]
             [environ.core                   :as environ]
             [hellhound.components.core      :as component]
-            [psychopomps.logger             :as logger]))
+            [hellhound.logger.core             :as logger]))
 
 
 (defrecord CassandraClient [host]

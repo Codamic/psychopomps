@@ -6,7 +6,7 @@
             [org.httpkit.client    :as client]
             [environ.core          :refer [env]]
             [cheshire.core         :refer [parse-string]]
-            [psychopomps.logger    :as logger]
+            [hellhound.logger.core    :as logger]
             [psychopomps.utils     :refer [while-let fetch> fetch]]))
 
 

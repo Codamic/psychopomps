@@ -1,7 +1,7 @@
 (ns psychopomps.jobs.convertors.html
   "This namespace contains all the convertors from html to other formats"
   (:require [hellhound.components.core :as component]
-            [psychopomps.logger        :as logger]
+            [hellhound.logger.core        :as logger]
             [psychopomps.utils         :refer [while-let]]
             [clojure.core.async        :as async]
             [environ.core              :refer [env]]))

@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure        "1.9.0-alpha15"]
                  [org.clojure/core.async     "0.3.442"]
                  [cheshire                   "5.7.0"]
+                 [com.taoensso/carmine       "2.16.0"]
                  [environ                    "1.1.0"]
                  [clj-oauth                  "1.5.5"]
                  [http-kit                   "2.2.0"]
@@ -23,7 +24,10 @@
   :main ^:skip-aot psychopomps.core
   :target-path "target/%s"
   :profiles {:dev {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
-                         :log-level    "debug"}
+                         :log-level    "debug"
+                         :redis-pool nil
+                         :redis-spec "redis://localhost:6379/"}
+
                    :dependencies []}
              :test {:dependencies [[se.haleby/stub-http "0.2.1"]]}
 
