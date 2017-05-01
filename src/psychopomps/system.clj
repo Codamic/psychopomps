@@ -4,7 +4,7 @@
    [hellhound.events                 :refer [defrouter]]
    [hellhound.components.webserver   :as webserver]
    [hellhound.components.websocket   :as websocket]
-   [psychopomps.logger               :refer [new-logger]]
+   [hellhound.components.logger      :refer [new-logger]]
    [psychopomps.web.handlers         :refer [dev-handler]]
    [psychopomps.db                   :refer [new-cassandra-client]]
    [psychopomps.collectors.core      :refer [new-collector-pool]]
