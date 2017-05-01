@@ -1,5 +1,7 @@
-(ns psychopomps.messaging.articles)
+(ns psychopomps.messaging.articles
+  (:require [hellhound.components.core :as component]))
 
 (defn fetch-latest
   "fetch the latest articles and send them to the client who asked for it"
-  [params ev-msg])
+  [params uid send-fn ev-msg]
+  (send-fn  uid [:some/event {:name "asdad"}]))
