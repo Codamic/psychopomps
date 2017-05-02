@@ -11,7 +11,7 @@
    [psychopomps.jobs.convertors.html :refer [new-html->md-job]]))
 
 
-(def dev
+(def dev-system
   {:components {:logger     {:record (new-logger)
                              :started nil}
 

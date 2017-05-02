@@ -1,7 +1,7 @@
 (ns psychopomps.core
   "Psychopomps is the godess who guide the souls to underworld."
   (:require [clojure.core.async        :as async]
-            [hellhound.logger.core        :as logger]
+            [hellhound.logger.core     :as logger]
             [psychopomps.system        :as system]
             [psychopomps.utils         :refer [while-let]]
             [hellhound.components.core :refer [set-system! start stop]])
@@ -29,5 +29,15 @@
   ;; (let [news-channel (collect-news)]
   ;;   (-> news-channel
   ;;       (end-of-pipeline)))
-  (set-system! system/dev)
+  (set-system! system/dev-system)
   (start))
+
+
+(defn start-system
+  []
+  (set-system! system/dev-system)
+  (start))
+
+(defn stop-system
+  []
+  (stop))
