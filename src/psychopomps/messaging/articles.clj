@@ -3,5 +3,5 @@
 
 (defn fetch-latest
   "fetch the latest articles and send them to the client who asked for it"
-  [params uid send-fn ev-msg]
-  (send-fn  uid [:some/event {:name "asdad"}]))
+  [params send-fn ev-msg]
+  (send-fn [:some/event {:name "asdad"}]))
