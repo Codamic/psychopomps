@@ -1,5 +1,6 @@
 (ns psychopomps.messaging.router
-  (:require [hellhound.messaging            :refer [defrouter]]
+  "Message router namespace"
+  (:require [hellhound.messaging.core       :refer [defrouter]]
             [psychopomps.messaging.articles :as articles]))
 
 (defrouter message-router

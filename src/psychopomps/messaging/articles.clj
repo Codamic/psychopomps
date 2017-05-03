@@ -1,7 +1,9 @@
 (ns psychopomps.messaging.articles
-  (:require [hellhound.components.core :as component]))
+  "Message handlers for article resource"
+  (:require [hellhound.components.core   :as component]
+            [hellhound.messaging.helpers :refer [update-app-db]]))
 
 (defn fetch-latest
   "fetch the latest articles and send them to the client who asked for it"
   [params send-fn ev-msg]
-  (send-fn [:some/event {:name "asdad"}]))
+  (update-app-db (:uid ev-msg) [:articles] [{:title "sameer"}]))
