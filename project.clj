@@ -5,7 +5,7 @@
             :url "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"}
   :dependencies [[org.clojure/clojure        "1.9.0-alpha15"]
                  [org.clojure/core.async     "0.3.442"]
-                 [cheshire                   "5.7.0"]
+                 [cheshire                   "5.7.1"]
                  [com.taoensso/carmine       "2.16.0"]
                  [environ                    "1.1.0"]
                  [clj-oauth                  "1.5.5"]
