@@ -6,4 +6,4 @@
 (defn fetch-latest
   "fetch the latest articles and send them to the client who asked for it"
   [params send-fn ev-msg]
-  (update-app-db (:uid ev-msg) [:articles] [{:title "sameer"}]))
+  (update-app-db (:uid ev-msg) [:recent-articles] [{:id 1 :title "sameer"}]))
