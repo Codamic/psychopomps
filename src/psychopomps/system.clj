@@ -27,6 +27,10 @@
                 ;;              :requires [:logger]
                 ;;              :started nil}
 
+                ;; :cache-to-redis {:record (new-redis-cache)
+                ;;                  :requires [:collectors]
+                ;;                  :inputs [:collectors]}
+
                 ;; :html-to-md {:record (new-html->md-job)
                 ;;              :requires [:logger :collectors]
                 ;;              :started nil

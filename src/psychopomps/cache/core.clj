@@ -1,4 +1,5 @@
 (ns psychopomps.cache.core
+  "This namespace provides several functions to cache data inside redis"
   (:require [environ.core     :refer [env]]
             [taoensso.carmine :as car :refer [wcar]]))
 
@@ -22,3 +23,15 @@
   [key]
   (redis->
    (car/get (name key))))
+
+(defn push->cache
+  "Push the given `key` to the array specified by the given key `name`."
+  [key value]
+  (redis->
+   (car/lpush (name key) value)))
+
+(defn pop<-cache
+  "Pull the last value in the array with the given `key`"
+  [key]
+  (redis->
+   (car/lpop (name key))))
