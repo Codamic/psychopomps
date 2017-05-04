@@ -8,7 +8,8 @@
    [psychopomps.db                   :refer [new-cassandra-client]]
    [psychopomps.collectors.core      :refer [new-collector-pool]]
    [psychopomps.messaging.router     :refer [message-router]]
-   [psychopomps.jobs.convertors.html :refer [new-html->md-job]]))
+   [psychopomps.jobs.convertors.html :refer [new-html->md-job]]
+   [psychopomps.cache.component :refer [new-redis-cache]]))
 
 
 (def dev-system
@@ -23,13 +24,13 @@
                 :webserver {:record (webserver/make-webserver dev-handler)
                             :requires [:websocket]}
 
-                ;; :collectors {:record (new-collector-pool)
-                ;;              :requires [:logger]
-                ;;              :started nil}
+                :collectors {:record (new-collector-pool)
+                             :requires [:logger]
+                             :started nil}
 
-                ;; :cache-to-redis {:record (new-redis-cache)
-                ;;                  :requires [:collectors]
-                ;;                  :inputs [:collectors]}
+                :cache-to-redis {:record (new-redis-cache)
+                                 :requires [:collectors]
+                                 :inputs [:collectors]}
 
                 ;; :html-to-md {:record (new-html->md-job)
                 ;;              :requires [:logger :collectors]
