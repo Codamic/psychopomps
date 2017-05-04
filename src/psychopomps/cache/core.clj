@@ -30,8 +30,19 @@
   (redis->
    (car/lpush (name key) value)))
 
+(defn expire-cache
+  [key time]
+  (redis->
+   (car/expire (name key) time)))
+
 (defn pop<-cache
   "Pull the last value in the array with the given `key`"
   [key]
   (redis->
    (car/lpop (name key))))
+
+(defn batch<-cache
+  "Fetch a batch from the given cache `key` from the `begining` till the `end`"
+  [key begining end]
+  (redis->
+   (car/lrange (name key) begining end)))

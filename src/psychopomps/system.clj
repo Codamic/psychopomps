@@ -24,13 +24,13 @@
                 :webserver {:record (webserver/make-webserver dev-handler)
                             :requires [:websocket]}
 
-                :collectors {:record (new-collector-pool)
-                             :requires [:logger]
-                             :started nil}
+                ;; :collectors {:record (new-collector-pool)
+                ;;              :requires [:logger]
+                ;;              :started nil}
 
-                :cache-to-redis {:record (new-redis-cache)
-                                 :requires [:collectors]
-                                 :inputs [:collectors]}
+                ;; :cache-to-redis {:record (new-redis-cache)
+                ;;                  :requires [:collectors]
+                ;;                  :inputs [:collectors]}
 
                 ;; :html-to-md {:record (new-html->md-job)
                 ;;              :requires [:logger :collectors]
