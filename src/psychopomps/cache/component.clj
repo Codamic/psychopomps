@@ -13,14 +13,12 @@
   component/Lifecycle
   (start [this]
     (let [input-chan (first (:inputs this))]
-      (println "xxxxxxxxxxxxxxxxxxxxxxx")
-      (println this)
-      (println input-chan)
       (assoc this
              :output
              (async/go (while-let [article (async/<! input-chan)]
                          (logger/info "Caching article '%s'" (:title article))
-                         (push->cache :articles article))))))
+                         (if-not (empty? article)
+                           (push->cache :articles article)))))))
   (stop [this]
     (if-not (nil? (:output this))
       (do
