@@ -13,22 +13,27 @@
                  [hickory                    "0.7.1"]
                  [io.aviso/pretty            "0.1.33"]
                  [clj-time                   "0.13.0"]
-                 [codamic/hellhound          "0.13.0-SNAPSHOT"]
+                 [codamic/hellhound          "0.14.0-SNAPSHOT"]
                  [clojurewerkz/cassaforte    "3.0.0-alpha1"]
                  [com.stuartsierra/component "0.3.2"]
                  [org.danielsz/system        "0.4.0"]]
 
-  :plugins [[lein-environ "1.1.0"]
-            [io.aviso/pretty "0.1.33"]]
+  :plugins [[lein-environ      "1.1.0"]
+            [io.aviso/pretty   "0.1.33"]]
+
+  :aliases {"db" ["run" "-m" "hellhound.tasks.db"]}
 
   :main ^:skip-aot psychopomps.core
   :target-path "target/%s"
-  :profiles {:dev {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
-                         :log-level    "debug"
-                         :redis-pool nil
-                         :redis-spec "redis://localhost:6379/"}
+  :profiles {:dev
+             {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
+                    :log-level    "debug"
+                    :redis-pool nil
+                    :redis-spec "redis://localhost:6379/"}
 
-                   :dependencies []}
+              :source-paths ["src/" "checkouts/hellhound/src/clj"]
+              :dependencies []}
+
              :test {:dependencies [[se.haleby/stub-http "0.2.1"]]}
 
              :uberjar {:aot :all}})
