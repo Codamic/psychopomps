@@ -5,7 +5,7 @@
    [hellhound.components.websocket   :as websocket]
    [hellhound.components.logger      :refer [new-logger]]
    [psychopomps.web.handlers         :refer [dev-handler]]
-   [psychopomps.db                   :refer [new-cassandra-client]]
+   [hellhound.components.cassandra   :refer [new-cassandra-client]]
    [psychopomps.collectors.core      :refer [new-collector-pool]]
    [psychopomps.messaging.router     :refer [message-router]]
    [psychopomps.jobs.convertors.html :refer [new-html->md-job]]
