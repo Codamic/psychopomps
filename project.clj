@@ -25,11 +25,18 @@
 
   :main ^:skip-aot psychopomps.core
   :target-path "target/%s"
-  :profiles {:dev
-             {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
-                    :log-level    "debug"
-                    :redis-pool nil
-                    :redis-spec "redis://localhost:6379/"}
+
+  :profiles
+  {:dev
+   {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
+          :log-level    "debug"
+          :redis-pool nil
+          :redis-spec "redis://localhost:6379/"
+          :migrations
+          {:migrators {:cassandra-mig   "migrations/cassandra"}
+           :databases {:cassandra :cass :host "localhost"
+                       :keyspace "psychopomps_dev"}
+           :environments {:dev [{:db :cassandra :migrator :cassandra-mig}]}}}
 
               :source-paths ["src/" "checkouts/hellhound/src/clj"]
               :dependencies []}
