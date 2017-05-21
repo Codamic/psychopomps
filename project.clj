@@ -16,31 +16,27 @@
                  [codamic/hellhound          "0.14.0-SNAPSHOT"]
                  [clojurewerkz/cassaforte    "3.0.0-alpha1"]
                  [com.stuartsierra/component "0.3.2"]
+                 [cc.qbits/alia-all          "4.0.0-beta10"]
                  [org.danielsz/system        "0.4.0"]]
 
   :plugins [[lein-environ      "1.1.0"]
             [io.aviso/pretty   "0.1.33"]]
 
-  :aliases {"db" ["run" "-m" "hellhound.tasks.db"]}
+  :aliases {"db" ["run" "-m" "psychopomps.tasks.db"]}
 
   :main ^:skip-aot psychopomps.core
   :target-path "target/%s"
 
   :profiles
   {:dev
-   {:env {:news-api-key "abc4ba4958af471d80d2324761996999"
-          :log-level    "debug"
-          :redis-pool nil
-          :redis-spec "redis://localhost:6379/"
-          :migrations
-          {:migrators {:cassandra-mig   "migrations/cassandra"}
-           :databases {:cassandra :cass :host "localhost"
-                       :keyspace "psychopomps_dev"}
-           :environments {:dev [{:db :cassandra :migrator :cassandra-mig}]}}}
+   {:env {:environment    :dev
+          :news-api-key   "abc4ba4958af471d80d2324761996999"
+          :log-level      "debug"
+          :redis-pool     nil
+          :redis-spec     "redis://localhost:6379/"
+          :cassandra-host "localhost"
+          :source-paths ["src/" "checkouts/hellhound/src/clj"]}}
 
-              :source-paths ["src/" "checkouts/hellhound/src/clj"]
-              :dependencies []}
+   :test {:dependencies [[se.haleby/stub-http "0.2.1"]]}
 
-             :test {:dependencies [[se.haleby/stub-http "0.2.1"]]}
-
-             :uberjar {:aot :all}})
+   :uberjar {:aot :all}})
