@@ -1,0 +1,6 @@
+{
+ ;; Databse configuration ----------------------------------
+ :db {:cassandra {:contact-hosts ["127.0.0.1"]}}
+
+ ;; Logger configuration -----------------------------------
+ :logger {:level :verbose}}XS

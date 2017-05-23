@@ -16,6 +16,7 @@
                  [codamic/hellhound          "0.14.0-SNAPSHOT"]
                  [com.stuartsierra/component "0.3.2"]
                  [cc.qbits/alia-all          "4.0.0-beta10"]
+                 [cc.qbits/hayt              "4.0.0"]
                  [org.danielsz/system        "0.4.0"]]
 
   :plugins [[lein-environ      "1.1.0"]
