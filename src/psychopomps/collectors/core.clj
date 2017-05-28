@@ -4,7 +4,7 @@
   (:require [clojure.core.async              :refer [chan close!]]
             [psychopomps.collectors.news-api :as news-api]
             [hellhound.logger.core              :as logger]
-            [hellhound.components.core       :as component]))
+            [hellhound.components.protocols     :as protocols]))
 
 (defn collect-news
   "Fire up collectores to collect news and put them in the queue"
@@ -13,7 +13,7 @@
 
 
 (defrecord CollectorsPool []
-  component/Lifecycle
+  protocols/Lifecycle
   (start [this]
     (logger/info "Starting the collectors pool...")
     (assoc this :output (collect-news)))

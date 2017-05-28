@@ -1,10 +1,10 @@
 (ns psychopomps.jobs.convertors.html
   "This namespace contains all the convertors from html to other formats"
-  (:require [hellhound.components.core :as component]
-            [hellhound.logger.core        :as logger]
-            [psychopomps.utils         :refer [while-let]]
-            [clojure.core.async        :as async]
-            [environ.core              :refer [env]]))
+  (:require [hellhound.components.protocols :as protocols]
+            [hellhound.logger.core          :as logger]
+            [psychopomps.utils              :refer [while-let]]
+            [clojure.core.async             :as async]
+            [environ.core                   :refer [env]]))
 
 (defn convert->md
   [article]
@@ -17,7 +17,7 @@
     out))
 
 (defrecord HTML->MD []
-  component/Lifecycle
+  protocols/Lifecycle
   (start [this]
     (logger/info "Starting HTML convertor...")
     (let [[input] (:inputs this)]

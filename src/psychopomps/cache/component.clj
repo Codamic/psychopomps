@@ -1,16 +1,16 @@
 (ns psychopomps.cache.component
   "The caching component to cache the fetched articles inside redis"
-  (:require [hellhound.components.core :as component]
-            [psychopomps.cache.core    :refer [push->cache]]
-            [clojure.core.async        :as async]
-            [clojure.core.async        :as async]
-            [psychopomps.utils         :refer [while-let]]
-            [hellhound.logger.core     :as logger]))
+  (:require [hellhound.components.protocols  :as protocols]
+            [psychopomps.cache.core          :refer [push->cache]]
+            [clojure.core.async              :as async]
+            [clojure.core.async              :as async]
+            [psychopomps.utils               :refer [while-let]]
+            [hellhound.logger.core           :as logger]))
 
 
 
 (defrecord RedisCache []
-  component/Lifecycle
+  protocols/Lifecycle
   (start [this]
     (let [input-chan (first (:inputs this))]
       (assoc this
