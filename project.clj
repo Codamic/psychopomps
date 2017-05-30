@@ -3,7 +3,7 @@
   :url "http://github.com/Codamic/psychopomps"
   :license {:name "GPLv2"
             :url "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"}
-  :dependencies [[org.clojure/clojure        "1.9.0-alpha15"]
+  :dependencies [[org.clojure/clojure        "1.9.0-alpha16"]
                  [org.clojure/core.async     "0.3.442"]
                  [cheshire                   "5.7.1"]
                  [com.taoensso/carmine       "2.16.0"]

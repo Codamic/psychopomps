@@ -7,9 +7,7 @@
        :connection {:contact-hosts ["127.0.0.1"]}
 
        ;; Keyspace details
-       :keyspace {
-                  }
-       }}
+       :keyspace {:name "psychopomps_dev"}}}
 
  ;; Logger configuration -----------------------------------
  :logger {:level :verbose}}XS
