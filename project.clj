@@ -22,7 +22,7 @@
   :plugins [[lein-environ      "1.1.0"]
             [io.aviso/pretty   "0.1.33"]]
 
-  :aliases {"db" ["run" "-m" "psychopomps.tasks.db"]}
+  :aliases {"db" ["run" "-m" "hellhound.tasks.db"]}
 
   :main ^:skip-aot psychopomps.core
   :target-path "target/%s"
