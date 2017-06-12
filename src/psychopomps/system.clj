@@ -24,8 +24,8 @@
                  :requires [:logger]
                  :started nil}
 
-    :websocket {:record (websocket/make-websocket message-router)}
-    :webserver {:record (webserver/make-webserver dev-handler)
+    :websocket {:record (websocket/make-websocket-component message-router)}
+    :webserver {:record (webserver/make-webserver-component dev-handler)
                 :requires [:websocket]}
 
     ;; :collectors {:record (new-collector-pool)
