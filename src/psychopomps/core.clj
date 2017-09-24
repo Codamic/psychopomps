@@ -1,43 +1,27 @@
 (ns psychopomps.core
   "Psychopomps is the godess who guide the souls to underworld."
   (:require [clojure.core.async        :as async]
-            [hellhound.logger.core     :as logger]
-            [psychopomps.system        :as system]
-            [psychopomps.utils         :refer [while-let]]
-            [hellhound.components.core :refer [set-system! start stop]])
+            [hellhound.logger          :as logger]
+            [hellhound.system          :as hellhound]
+            [psychopomps.system        :as system])
+
   (:gen-class))
 
 
+(defn -main
+  "I don't do a whole lot ... yet."
+  [& args]
+  (hellhound/set-system! system/dev-system)
+  (hellhound/start!))
 
-(defn end-of-pipeline
-  "This is a function for debug purposes"
-  [chan]
-  ;(async/go)
-  (while-let [article (async/<!! chan)]
-    (logger/info "Article: %s ||| %s" (:raw-content article) (:url article))))
+
+(defn stop-system
+  []
+  (hellhound/stop!))
 
 (.addShutdownHook
  (Runtime/getRuntime)
  (Thread. (fn []
             ;;(logger/info "Shutting down...")
             (println "Shutting down...")
-            (stop))))
-
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  ;; (let [news-channel (collect-news)]
-  ;;   (-> news-channel
-  ;;       (end-of-pipeline)))
-  (set-system! system/dev-system)
-  (start))
-
-
-(defn start-system
-  []
-  (set-system! system/dev-system)
-  (start))
-
-(defn stop-system
-  []
-  (stop))
+            (stop-system))))
