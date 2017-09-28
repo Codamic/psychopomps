@@ -21,7 +21,7 @@
 
 (.addShutdownHook
  (Runtime/getRuntime)
- (Thread. (fn []
-            ;;(logger/info "Shutting down...")
-            (println "Shutting down...")
-            (stop-system))))
+ (Thread.
+  (fn []
+    (println "Shutting down...")
+    (stop-system))))
